@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, choice
 
 import pygame as pg
 
@@ -60,13 +60,11 @@ class Apple(GameObject):
     def __init__(
             self,
             position=None,
-            body_color=None,
+            body_color=APPLE_COLOR,
             occupied_position=[]) -> None:
 
         super().__init__(position, body_color)
-        self.position = self.randomize_position(occupied_position)
-        self.body_color = APPLE_COLOR
-        self.occupied_position = occupied_position
+        self.randomize_position(occupied_position)
 
     def randomize_position(self, occupied_position):
         """Метод для указания произвольной позиции яблока."""
@@ -75,8 +73,6 @@ class Apple(GameObject):
                              randint(0, GRID_HEIGHT) * GRID_SIZE)
             if self.position not in occupied_position:
                 break
-
-        return self.position
 
     def draw(self):
         """Метод для отрисовки яблока."""
@@ -89,12 +85,10 @@ class Snake(GameObject):
     """Класс для взаимодействия с змейкой."""
 
     def __init__(self,
-                 position=None,
-                 body_color=None) -> None:
+                 position=SCREEN_CENTER,
+                 body_color=SNAKE_COLOR) -> None:
 
         super().__init__(position, body_color)
-        self.body_color = SNAKE_COLOR
-        self.position = SCREEN_CENTER
         self.positions = [self.position]
         self.direction = RIGHT
         self.next_direction = None
@@ -145,7 +139,9 @@ class Snake(GameObject):
     def reset(self):
         """Метод, который сбрасывает змейку."""
         self.positions = [self.position]
-        return self.positions
+        self.direction = choice([UP, DOWN, RIGHT, LEFT])
+        self.last = None
+        self.next_direction = None
 
 
 def handle_keys(game_object):
@@ -168,9 +164,8 @@ def handle_keys(game_object):
 def main():
     """Инициализация PyGame."""
     pg.init()
-    occupied_position = [SCREEN_CENTER]
-    apple = Apple(occupied_position)
     snake = Snake()
+    apple = Apple(snake.positions)
 
     while True:
         clock.tick(SPEED)
@@ -184,6 +179,7 @@ def main():
         elif snake.get_head_position() in snake.positions[1:]:
             snake.reset()
             screen.fill(BOARD_BACKGROUND_COLOR)
+            apple.randomize_position(snake.positions)
 
         apple.draw()
         snake.draw()
