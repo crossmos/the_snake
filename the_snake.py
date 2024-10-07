@@ -119,7 +119,6 @@ class Snake(GameObject):
 
     def draw(self):
         """Метод, который отрисовывает змейку."""
-
         rect = (pg.Rect(self.positions[0], (GRID_SIZE, GRID_SIZE)))
         pg.draw.rect(screen, self.body_color, rect)
         pg.draw.rect(screen, BORDER_COLOR, rect, 1)
@@ -145,7 +144,6 @@ class Snake(GameObject):
 
     def reset(self):
         """Метод, который сбрасывает змейку."""
-
         self.positions = [self.position]
         return self.positions
 
